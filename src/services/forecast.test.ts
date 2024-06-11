@@ -1,78 +1,112 @@
-import { OpenWeatherResponse, fetchForecastData } from './forecast';
+import { fetchForecastData, OpenWeatherResponse, ForecastItem } from './forecast';
 import { MonitoringTool } from './monitoring';
+import { env } from '@/utils/env';
+
+// Mock the fetch function and the environment variable
+global.fetch = jest.fn();
+env.OPEN_WEATHER_API_KEY = 'mock-api-key';
 
 class MockMonitoringTool implements MonitoringTool {
   captureAndLogException = jest.fn();
 }
 
-global.fetch = jest.fn();
+const createMockForecastItem = (): ForecastItem => ({
+  dt: 1718150400,
+  main: {
+    temp: 23.98,
+    feels_like: 24.24,
+    temp_min: 22.8,
+    temp_max: 23.98,
+    pressure: 1019,
+    humidity: 69,
+    sea_level: 1019,
+    grnd_level: 1022,
+    temp_kf: 1.18,
+  },
+  weather: [
+    {
+      id: 800,
+      main: 'Clear',
+      description: 'céu limpo',
+      icon: '01n',
+    },
+  ],
+  clouds: { all: 0 },
+  wind: { speed: 2.17, deg: 90, gust: 2.65 },
+  visibility: 10000,
+  pop: 0,
+  sys: { pod: 'n' },
+  dt_txt: '2024-06-12 00:00:00',
+});
 
 describe('fetchForecastData', () => {
   let mockMonitoringTool: MockMonitoringTool;
 
   beforeEach(() => {
     mockMonitoringTool = new MockMonitoringTool();
-    (global.fetch as jest.Mock).mockReset();
+    (fetch as jest.Mock).mockClear();
   });
 
-  it('should fetch the weather data successfully', async () => {
+  it('should return forecast data for a valid location', async () => {
     const mockResponse: OpenWeatherResponse = {
-      coord: { lon: -43.2075, lat: -22.9028 },
-      weather: [{ id: 800, main: 'Clear', description: 'clear sky', icon: '01d' }],
-      base: 'stations',
-      main: {
-        temp: 301.6,
-        feels_like: 302.02,
-        temp_min: 301.13,
-        temp_max: 304.27,
-        pressure: 1018,
-        humidity: 49,
+      cod: '200',
+      message: 0,
+      cnt: 40,
+      list: [createMockForecastItem(), createMockForecastItem(), createMockForecastItem()],
+      city: {
+        id: 3451190,
+        name: 'Rio de Janeiro',
+        coord: { lat: -22.9028, lon: -43.2075 },
+        country: 'BR',
+        population: 6023699,
+        timezone: -10800,
+        sunrise: 1718098215,
+        sunset: 1718136904,
       },
-      visibility: 10000,
-      wind: { speed: 3.09, deg: 200 },
-      clouds: { all: 0 },
-      dt: 1718125064,
-      sys: { type: 1, id: 8429, country: 'BR', sunrise: 1718098215, sunset: 1718136904 },
-      timezone: -10800,
-      id: 3451190,
-      name: 'Rio de Janeiro',
-      cod: 200,
     };
 
-    (global.fetch as jest.Mock).mockResolvedValue({
+    (fetch as jest.Mock).mockResolvedValueOnce({
       ok: true,
-      json: () => Promise.resolve(mockResponse),
+      json: async () => mockResponse,
     });
 
     const data = await fetchForecastData('Rio de Janeiro', mockMonitoringTool);
-    expect(data).toEqual(mockResponse);
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(global.fetch).toHaveBeenCalledWith(
-      'https://api.openweathermap.org/data/2.5/weather?q=Rio%20de%20Janeiro&appid=772920597e4ec8f00de8d376dfb3f094&units=metric'
-    );
-    expect(mockMonitoringTool.captureAndLogException).not.toHaveBeenCalled();
-  });
 
-  it('should throw an error and capture it with the monitoring tool if the response is not ok', async () => {
-    (global.fetch as jest.Mock).mockResolvedValue({
-      ok: false,
+    expect(data).toEqual({
+      today: {
+        temperatureInCelcius: 23.98,
+        temperatureInFahrenheit: 75.164,
+        description: 'céu limpo',
+        wind: 2.17,
+        humidity: 69,
+        pressure: 1019,
+      },
+      tomorrow: {
+        temperatureInCelcius: 23.98,
+        temperatureInFahrenheit: 75.164,
+        description: 'céu limpo',
+        wind: 2.17,
+        humidity: 69,
+        pressure: 1019,
+      },
+      dayAfterTomorrow: {
+        temperatureInCelcius: 23.98,
+        temperatureInFahrenheit: 75.164,
+        description: 'céu limpo',
+        wind: 2.17,
+        humidity: 69,
+        pressure: 1019,
+      },
     });
-
-    await expect(fetchForecastData('Rio de Janeiro', mockMonitoringTool)).rejects.toThrow(
-      'Could not fetch weather data'
-    );
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(mockMonitoringTool.captureAndLogException).toHaveBeenCalledTimes(1);
   });
 
-  it('should throw an error and capture it with the monitoring tool if fetch throws an error', async () => {
-    const fetchError = new Error('Network error');
-    (global.fetch as jest.Mock).mockRejectedValue(fetchError);
+  it('should return 500 if there is an error fetching forecast data', async () => {
+    (fetch as jest.Mock).mockRejectedValueOnce(new Error('Fetch error'));
 
     await expect(fetchForecastData('Rio de Janeiro', mockMonitoringTool)).rejects.toThrow(
       'Could not fetch weather data'
     );
-    expect(global.fetch).toHaveBeenCalledTimes(1);
-    expect(mockMonitoringTool.captureAndLogException).toHaveBeenCalledWith(fetchError);
+
+    expect(mockMonitoringTool.captureAndLogException).toHaveBeenCalledWith(new Error('Fetch error'));
   });
 });

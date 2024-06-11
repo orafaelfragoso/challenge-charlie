@@ -1,3 +1,4 @@
+import { celsiusToFahrenheit } from '@/utils/forecast';
 import { MonitoringTool } from './monitoring';
 import { env } from '@/utils/env';
 
@@ -20,11 +21,15 @@ export interface Main {
   temp_max: number;
   pressure: number;
   humidity: number;
+  sea_level: number;
+  grnd_level: number;
+  temp_kf: number;
 }
 
 export interface Wind {
   speed: number;
   deg: number;
+  gust: number;
 }
 
 export interface Clouds {
@@ -32,36 +37,70 @@ export interface Clouds {
 }
 
 export interface Sys {
-  type: number;
+  pod: string;
+}
+
+export interface ForecastItem {
+  dt: number;
+  main: Main;
+  weather: Weather[];
+  clouds: Clouds;
+  wind: Wind;
+  visibility: number;
+  pop: number;
+  sys: Sys;
+  dt_txt: string;
+}
+
+export interface City {
   id: number;
+  name: string;
+  coord: Coordinates;
   country: string;
+  population: number;
+  timezone: number;
   sunrise: number;
   sunset: number;
 }
 
 export interface OpenWeatherResponse {
-  coord: Coordinates;
-  weather: Weather[];
-  base: string;
-  main: Main;
-  visibility: number;
-  wind: Wind;
-  clouds: Clouds;
-  dt: number;
-  sys: Sys;
-  timezone: number;
-  id: number;
-  name: string;
-  cod: number;
+  cod: string;
+  message: number;
+  cnt: number;
+  list: ForecastItem[];
+  city: City;
 }
 
-export const fetchForecastData = async (
-  location: string,
-  monitoring?: MonitoringTool
-): Promise<OpenWeatherResponse> => {
+export interface Forecast {
+  temperatureInCelcius: number;
+  temperatureInFahrenheit: number;
+  description: string;
+  wind: number;
+  humidity: number;
+  pressure: number;
+}
+
+export interface Response {
+  today: Forecast;
+  tomorrow: Forecast;
+  dayAfterTomorrow: Forecast;
+}
+
+const parseForecastData = (forecast: ForecastItem): Forecast => {
+  return {
+    temperatureInCelcius: forecast.main.temp,
+    temperatureInFahrenheit: celsiusToFahrenheit(forecast.main.temp),
+    description: forecast.weather[0].description,
+    wind: forecast.wind.speed,
+    humidity: forecast.main.humidity,
+    pressure: forecast.main.pressure,
+  };
+};
+
+export const fetchForecastData = async (location: string, monitoring?: MonitoringTool): Promise<Response> => {
   try {
     const response = await fetch(
-      `https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(location)}&appid=${env.OPEN_WEATHER_API_KEY}&units=metric`
+      `https://api.openweathermap.org/data/2.5/forecast?q=${encodeURIComponent(location)}&appid=${env.OPEN_WEATHER_API_KEY}&units=metric&lang=pt_br`
     );
 
     if (!response.ok) {
@@ -69,7 +108,13 @@ export const fetchForecastData = async (
     }
 
     const data: OpenWeatherResponse = await response.json();
-    return data;
+    const res: Response = {
+      today: parseForecastData(data.list[0]),
+      tomorrow: parseForecastData(data.list[1]),
+      dayAfterTomorrow: parseForecastData(data.list[2]),
+    };
+
+    return res;
   } catch (error) {
     if (error instanceof Error) {
       monitoring?.captureAndLogException(error);
