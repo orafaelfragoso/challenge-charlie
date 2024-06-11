@@ -1,15 +1,21 @@
 import { NextResponse, NextRequest } from 'next/server';
 import { fetchForecastData } from '@/services/forecast';
+import { z } from 'zod';
 
-export async function GET(req: NextRequest) {
-  const { searchParams } = new URL(req.url);
-  const location = searchParams.get('location');
+const schema = z.object({
+  location: z.string().min(1, { message: 'Location is required' }),
+});
 
-  if (!location) {
-    return NextResponse.json({ error: 'Location query parameter is required' }, { status: 400 });
-  }
-
+export async function POST(req: NextRequest) {
   try {
+    const body = await req.json();
+    const result = schema.safeParse(body);
+
+    if (!result.success) {
+      return NextResponse.json({ error: 'Location is required' }, { status: 400 });
+    }
+
+    const { location } = result.data;
     const data = await fetchForecastData(location);
     return NextResponse.json(data);
   } catch (error) {
