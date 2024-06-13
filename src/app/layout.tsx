@@ -23,7 +23,9 @@ export default async function RootLayout({
         }}
       >
         <div className='absolute inset-0 bg-white bg-opacity-30 bg-cover bg-center filter backdrop-filter backdrop-blur-lg'></div>
-        <div className='relative h-screen overflow-hidden w-full flex items-center justify-center'>{children}</div>
+        <div className='relative h-screen overflow-hidden w-full flex justify-start items-start md:items-center md:justify-center'>
+          {children}
+        </div>
       </body>
     </html>
   );

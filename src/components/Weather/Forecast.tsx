@@ -29,7 +29,7 @@ const Forecast = ({ title, celsius, fahrenheit, description, wind, humidity, pre
 
   return (
     <div
-      className='w-1/2 p-4 flex flex-col gap-4 justify-center items-start cursor-pointer'
+      className='w-full md:w-1/2 p-4 flex flex-col gap-4 justify-center items-start cursor-pointer'
       onClick={() => toggleTemperature(!isCelsius)}
       role='button'
       aria-pressed={!isCelsius}
