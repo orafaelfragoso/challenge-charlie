@@ -1,9 +1,11 @@
 const pkg = require('./package.json');
 
+interface CommitMessageContext {
+  raw: string;
+}
+
 // Check if the user has configured the package to use conventional commits.
-const isConventional = pkg.config
-  ? pkg.config['cz-emoji']?.conventional
-  : false;
+const isConventional = pkg.config ? pkg.config['cz-emoji']?.conventional : false;
 
 // Regex for default and conventional commits.
 const RE_DEFAULT_COMMIT =
@@ -18,10 +20,8 @@ module.exports = {
   plugins: [
     {
       rules: {
-        'cz-emoji': ({ raw }) => {
-          const isValid = isConventional
-            ? RE_CONVENTIONAL_COMMIT.test(raw)
-            : RE_DEFAULT_COMMIT.test(raw);
+        'cz-emoji': ({ raw }: CommitMessageContext) => {
+          const isValid = isConventional ? RE_CONVENTIONAL_COMMIT.test(raw) : RE_DEFAULT_COMMIT.test(raw);
 
           const message = isConventional
             ? `Your commit message should follow conventional commit format.`

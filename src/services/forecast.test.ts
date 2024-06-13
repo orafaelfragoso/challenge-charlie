@@ -1,4 +1,4 @@
-import { fetchForecastData, OpenWeatherResponse, ForecastItem } from './forecast';
+import { fetchForecastData } from './forecast';
 import { MonitoringTool } from './monitoring';
 import { env } from '@/utils/env';
 
@@ -10,7 +10,7 @@ class MockMonitoringTool implements MonitoringTool {
   captureAndLogException = jest.fn();
 }
 
-const createMockForecastItem = (): ForecastItem => ({
+const createMockForecastItem = () => ({
   dt: 1718150400,
   main: {
     temp: 23.98,
@@ -48,7 +48,7 @@ describe('fetchForecastData', () => {
   });
 
   it('should return forecast data for a valid location', async () => {
-    const mockResponse: OpenWeatherResponse = {
+    const mockResponse = {
       cod: '200',
       message: 0,
       cnt: 40,
