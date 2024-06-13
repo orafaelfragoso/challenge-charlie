@@ -8,10 +8,18 @@ const config: Config = {
   ],
   theme: {
     extend: {
-      backgroundImage: {
-        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-        'gradient-conic':
-          'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      boxShadow: {
+        material:
+          '0px 2px 1px -1px rgba(0, 0, 0, 0.2), 0px 1px 1px 0px rgba(0, 0, 0, 0.14), 0px 1px 3px 0px rgba(0,0,0,.12)',
+      },
+      keyframes: {
+        spin: {
+          '0%, 100%': { transform: 'rotate(360deg)' },
+          '50%': { transform: 'rotate(180deg)' },
+        },
+      },
+      animation: {
+        spin: 'spin 1s linear infinite',
       },
     },
   },
