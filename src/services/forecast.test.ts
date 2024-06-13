@@ -80,6 +80,7 @@ describe('fetchForecastData', () => {
         wind: 2.17,
         humidity: 69,
         pressure: 1019,
+        icon: '01n',
       },
       tomorrow: {
         temperatureInCelcius: 23.98,
@@ -88,6 +89,7 @@ describe('fetchForecastData', () => {
         wind: 2.17,
         humidity: 69,
         pressure: 1019,
+        icon: '01n',
       },
       dayAfterTomorrow: {
         temperatureInCelcius: 23.98,
@@ -96,6 +98,7 @@ describe('fetchForecastData', () => {
         wind: 2.17,
         humidity: 69,
         pressure: 1019,
+        icon: '01n',
       },
     });
   });
