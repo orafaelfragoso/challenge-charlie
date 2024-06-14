@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 interface RootProps {
   name: string;
   className?: string;
@@ -39,4 +41,4 @@ function Icon({ name, className }: RootProps) {
   );
 }
 
-export default Icon;
+export default memo(Icon);

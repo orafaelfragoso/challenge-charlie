@@ -53,9 +53,9 @@ const Forecast = ({ title, celsius, fahrenheit, description, wind, humidity, pre
 
       {wind && humidity && pressure && (
         <div>
-          <p className='font-normal text-md text-gray-800'>Vento: {wind}</p>
-          <p className='font-normal text-md text-gray-800'>Humidade: {humidity}</p>
-          <p className='font-normal text-md text-gray-800'>Pressão: {pressure}</p>
+          <p className='font-normal text-md text-gray-800'>Vento: NO {wind}km/h</p>
+          <p className='font-normal text-md text-gray-800'>Umidade: {humidity}%</p>
+          <p className='font-normal text-md text-gray-800'>Pressão: {pressure}hPA</p>
         </div>
       )}
     </div>

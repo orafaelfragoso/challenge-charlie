@@ -1,6 +1,6 @@
 'use client';
 
-import { ReactNode } from 'react';
+import { ReactNode, memo } from 'react';
 import classNames from 'classnames';
 
 interface RootProps {
@@ -9,6 +9,7 @@ interface RootProps {
 }
 
 function Content({ children, temperature }: RootProps) {
+  console.log(temperature);
   const classes = classNames({
     'p-2 rounded-lg flex flex-col md:flex-row justify-end': true,
     'bg-blue-50 border-blue-100 border': temperature <= 15,
@@ -19,4 +20,4 @@ function Content({ children, temperature }: RootProps) {
   return <div className={classes}>{children}</div>;
 }
 
-export default Content;
+export default memo(Content);

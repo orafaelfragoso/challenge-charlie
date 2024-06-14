@@ -27,7 +27,7 @@ function WeatherWidget({ city: initialCity, data: initialData }: RootProps) {
     <Weather.Root>
       <Weather.Input value={city} onChange={onChangeInputText} onSubmit={onFormSubmit} loading={loading} />
       {days.map((day, index) => (
-        <Weather.Content temperature={14} key={index}>
+        <Weather.Content temperature={day.temperatureInCelcius} key={index}>
           {index === 0 && (
             <>
               <Weather.Icon name={day.icon} />
