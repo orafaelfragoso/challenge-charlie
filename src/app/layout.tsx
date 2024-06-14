@@ -17,7 +17,7 @@ export default async function RootLayout({
   return (
     <html lang='en'>
       <body
-        className='relative h-screen overflow-hidden'
+        className='relative h-screen md:overflow-hidden'
         style={{
           backgroundImage: `url(${bgImage})`,
         }}

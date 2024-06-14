@@ -1,3 +1,4 @@
+import { getWindDirectionLabel } from './../utils/wind';
 import { celsiusToFahrenheit } from '@/utils/forecast';
 import { MonitoringTool } from './monitoring';
 import { env } from '@/utils/env';
@@ -7,6 +8,7 @@ export interface Forecast {
   temperatureInFahrenheit: number;
   description: string;
   wind: number;
+  windDirection: string;
   humidity: number;
   pressure: number;
   icon: string;
@@ -24,6 +26,7 @@ const parseForecastData = (forecast: any): Forecast => {
     temperatureInFahrenheit: celsiusToFahrenheit(forecast.main.temp),
     description: forecast.weather[0].description,
     wind: forecast.wind.speed,
+    windDirection: getWindDirectionLabel(forecast.wind.deg),
     humidity: forecast.main.humidity,
     pressure: forecast.main.pressure,
     icon: forecast.weather[0].icon,

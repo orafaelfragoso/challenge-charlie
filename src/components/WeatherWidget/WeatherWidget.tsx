@@ -37,6 +37,7 @@ function WeatherWidget({ city: initialCity, data: initialData }: RootProps) {
                 fahrenheit={day.temperatureInFahrenheit}
                 description={day.description}
                 wind={day.wind}
+                windDirection={day.windDirection}
                 pressure={day.pressure}
                 humidity={day.humidity}
               />
