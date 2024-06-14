@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { fetchForecastData } from '@/services/forecast';
 import { POST } from './route';

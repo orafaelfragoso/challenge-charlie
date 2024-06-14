@@ -25,6 +25,7 @@ function Input({ value, onChange, onSubmit, loading: loadingForecast }: RootProp
   return (
     <div className='flex flex-row gap-1 items-center'>
       <button
+        data-testid='geo-button'
         data-icon='('
         className='w-12 h-12 text-[32px] flex justify-center items-center text-gray-700 disabled:text-gray-400 disabled:animate-spin'
         aria-label='Get geo coordinates'
@@ -32,7 +33,7 @@ function Input({ value, onChange, onSubmit, loading: loadingForecast }: RootProp
         disabled={loading || loadingForecast}
         onClick={fetchCity}
       />
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={handleSubmit} role='form'>
         <label htmlFor='city' className='sr-only'>
           Digite uma cidade
         </label>

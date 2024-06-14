@@ -1,3 +1,6 @@
+/**
+ * @jest-environment node
+ */
 import { NextRequest } from 'next/server';
 import { fetchLocation } from '@/services/coordinates';
 import { POST } from './route';
