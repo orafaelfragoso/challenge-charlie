@@ -9,7 +9,6 @@ interface RootProps {
 }
 
 function Content({ children, temperature }: RootProps) {
-  console.log(temperature);
   const classes = classNames({
     'p-2 rounded-lg flex flex-col md:flex-row justify-end': true,
     'bg-blue-50 border-blue-100 border': temperature <= 15,
